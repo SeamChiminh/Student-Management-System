@@ -39,7 +39,7 @@ public class Menu implements Color{
         public static void menu(){
 //            System.out.println("""
 //                    \t\t\t\t\t\t╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-//                    \t\t\t\t\t\t║                                               ★ 彡[APPLICATION MENU]彡★                                             ║
+//                    \t\t\t\t\t\t║                                               ★ 彡[APPLICATION MENU]彡 ★                                             ║
 //                    \t\t\t\t\t\t║=====================================================================================================================║
 //                    \t\t\t\t\t\t║                                                                                                                     ║
 //                    \t\t\t\t\t\t║   \t\t1. ADD NEW STUDENT        \t\t2. LIST ALL STUDENTS                  \t3. COMMIT DATA TO FILE            ║
@@ -51,7 +51,7 @@ public class Menu implements Color{
 
             System.out.println("""
                     ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-                    ║                                               ★ 彡[APPLICATION MENU]彡★                                             ║
+                    ║                                               ★彡[APPLICATION MENU]彡★                                              ║
                     ║=====================================================================================================================║
                     ║                                                                                                                     ║
                     ║   \t\t1. ADD NEW STUDENT        \t\t2. LIST ALL STUDENTS                  \t3. COMMIT DATA TO FILE            ║

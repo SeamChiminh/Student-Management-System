@@ -9,4 +9,5 @@ public interface Color {
     String PURPLE = "\u001B[35m";
     String CYAN   = "\u001B[36m";
     String WHITE  = "\u001B[37m";
+    String RESET = "\u001B[0m";
 }
