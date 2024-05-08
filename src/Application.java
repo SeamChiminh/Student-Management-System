@@ -1,31 +1,37 @@
 import fileIO.controller.StudentController;
+import fileIO.utils.Student;
 import fileIO.view.Menu;
+import fileIO.view.StudentView;
 
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Application {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        List<Student> students = new ArrayList<>();
+        StudentController student = new StudentController();
         boolean exit = false;
 //        Menu.banner();
-        Menu.menu();
 
+        Menu.menu();
         while (!exit) {
             System.out.print("🖲️Insert Option: ");
             int choice = sc.nextInt();
             sc.nextLine();
             switch (choice) {
                 case 1:
-                    StudentController student = new StudentController();
                     System.out.println("=".repeat(50));
-                    student.AddNewStudent();
+                    student.addNewStudent();
                     break;
                 case 2:
-                    System.out.println("2. LIST ALL STUDENT");
+                    System.out.println("=".repeat(50));
+                    StudentView.listAllStudent(students);
                     break;
                 case 3:
                     System.out.println("3. COMMIT DATA TO FILE");
+                    student.commitChanges();
                     break;
                 case 4:
                     System.out.println("4. SEARCH STUDENT");

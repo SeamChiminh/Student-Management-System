@@ -1,5 +1,9 @@
 package fileIO.model;
 
+import fileIO.utils.Student;
+
+import java.util.List;
+
 public interface StudentService {
 //    void generateDesignedObjectForWriting();
 //    void addNewStudent(Student student);

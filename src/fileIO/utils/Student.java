@@ -3,14 +3,15 @@ package fileIO.utils;
 public class Student {
     private String id;
     private String name;
-    private int day;
-    private int month;
-    private int year;
+    private Integer day;
+    private Integer month;
+    private Integer year;
     private String classroom;
     private String subject;
+    private String createDate;
 
     public Student(){}
-    public Student(String id, String name, int day, int month, int year, String classroom, String subject) {
+    public Student(String id, String name, Integer day, Integer month, Integer year, String classroom, String subject, String createDate) {
         this.id = id;
         this.name = name;
         this.day = day;
@@ -18,6 +19,7 @@ public class Student {
         this.year = year;
         this.classroom = classroom;
         this.subject = subject;
+        this.createDate = createDate;
     }
 
     public String getId() {
@@ -34,7 +36,7 @@ public class Student {
         this.name = name;
     }
 
-    public int getDay() {
+    public Integer getDay() {
         return day;
     }
     public void setDay(int day) {
@@ -42,14 +44,14 @@ public class Student {
 
     }
 
-    public int getMonth() {
+    public Integer getMonth() {
         return month;
     }
     public void setMonth(int month) {
         this.month = month;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
     public void setYear(int year) {
@@ -70,16 +72,24 @@ public class Student {
         this.subject = subject;
     }
 
+    public String getCreateDate() {
+        return createDate;
+    }
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", day=" + day +
                 ", month=" + month +
                 ", year=" + year +
                 ", classroom='" + classroom + '\'' +
                 ", subject='" + subject + '\'' +
+                ", createDate='" + createDate + '\'' +
                 '}';
     }
 }
