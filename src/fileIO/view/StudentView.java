@@ -3,23 +3,27 @@ package fileIO.view;
 import fileIO.utils.Student;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
+import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class StudentView {
     static Integer currentPage = 1;
     static Integer pageSize = 1;
-    static Integer rowPerPage = 5;
+    static Integer rowPerPage = 4;
 
     public static void listAllStudent(List<Student> students) {
         pageSize = (int) Math.ceil((double) students.size() / rowPerPage);
         int startIndex = (currentPage * rowPerPage) - rowPerPage; // 5
         int endIndex = Math.min(startIndex + rowPerPage, students.size());
-        System.out.println("Total Page : " + pageSize);
-        System.out.println("[*] STUDENT'S DATA");
 
-        Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE);
+        System.out.println("+" + "~".repeat(117) + "+");
+        System.out.println("📃Total Page : " + pageSize);
+        System.out.println("💾 STUDENT'S DATA");
+
+        Table table = new Table(6, BorderStyle.UNICODE_BOX_DOUBLE_BORDER_WIDE, ShownBorders.ALL);
         CellStyle cellStyle = new CellStyle(CellStyle.HorizontalAlign.CENTER);
         table.setColumnWidth(0, 30, 30);
         table.setColumnWidth(1, 30, 30);
@@ -47,16 +51,78 @@ public class StudentView {
             }
 
             System.out.println(table.render());
-            System.out.println("+" + "~".repeat(150) + "+");
-            System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + "\t\t" + " All Record: " + students.size());
+            System.out.println("+" + "~".repeat(117) + "+");
+            System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " [+] All Record: " + students.size());
             System.out.println("[+] Previous (P/p) \t\t [+] Next (N/n) \t\t\t [+] Back(B/b)");
-            System.out.println("+" + "~".repeat(150) + "+");
+            System.out.println("+" + "~".repeat(117) + "+");
+            System.out.print("[+] Insert to Navigation [P/N]: ");
+
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+
+            while (true) {
+
+                if (input.equalsIgnoreCase("P") || input.equalsIgnoreCase("previous")) {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        listAllStudent(students);
+                        break;
+                    } else {
+                        System.out.println("⚠️ First page.");
+                    }
+                } else if (input.equalsIgnoreCase("N") || input.equalsIgnoreCase("next")) {
+                    if (currentPage < pageSize) {
+                        currentPage++;
+                        listAllStudent(students);
+                        break;
+                    } else {
+                        System.out.println("⚠️ Last page.");
+                    }
+                } else if (input.equalsIgnoreCase("B") || input.equalsIgnoreCase("back")) {
+                    return;
+                } else {
+                    System.out.println("⚠️ Invalid input.");
+                }
+
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " All Record: " + students.size());
+                System.out.println("[+] Previous (P/p) \t\t [+] Next (N/n) \t\t\t [+] Back(B/b)");
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.print("[+] Insert to Navigation [P/n]: ");
+                input = scanner.nextLine();
+            }
 
         } catch (IndexOutOfBoundsException e) {
             System.out.println("No records to display.");
         }
+    }
 
+    public static void displayStudentByID(Student student) {
 
+        System.out.println(".".repeat(103));
+        System.out.println("[*] STUDENT'S INFO.");
+        Table table = new Table(2, BorderStyle.CLASSIC_COMPATIBLE, ShownBorders.ALL);
+        CellStyle cellStyle = new CellStyle(CellStyle.HorizontalAlign.CENTER);
+        table.setColumnWidth(0, 50, 50);
+        table.setColumnWidth(1, 50, 50);
+        table.addCell("STUDENT'S INFORMATION", cellStyle);
+        table.addCell("DATA", cellStyle);
+
+        table.addCell("ID", cellStyle);
+        table.addCell(student.getId(), cellStyle);
+        table.addCell("NAME", cellStyle);
+        table.addCell(student.getName(), cellStyle);
+
+        table.addCell("BIRTH", cellStyle);
+        table.addCell(student.getYear() + "-" + student.getMonth() + "-" + student.getDay(), cellStyle);
+
+        table.addCell("CLASS", cellStyle);
+        table.addCell(student.getClassroom(), cellStyle);
+
+        table.addCell("SUBJECT", cellStyle);
+        table.addCell(student.getSubject(), cellStyle);
+
+        System.out.println(table.render());
     }
 
 }

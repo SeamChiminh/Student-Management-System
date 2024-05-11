@@ -2,8 +2,11 @@ package fileIO.controller;
 import fileIO.model.StudentService;
 import fileIO.utils.Student;
 import fileIO.view.Color;
+import fileIO.view.StudentView;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +19,19 @@ public class StudentController implements Color{
     private boolean changesCommitted;
     private boolean delete;
 
+    public List<Student> getStudents() {
+        return students;
+    }
+
     int randomNumber = generateRandomNumber(1000, 9999);
     String id = randomNumber + "CSTAD";
 
-    // Method to generate a random number in a specified range
     private int generateRandomNumber(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
     }
 
-    private String serializeProduct(Student student) {
+    String serializeStudent(Student student) {
         return String.format("%s,%s,%d,%d,%d,%s,%s,%s", student.getId(), student.getName(), student.getDay(), student.getMonth(),
                 student.getYear(), student.getClassroom(), student.getSubject(), student.getCreateDate());
     }
@@ -33,27 +39,27 @@ public class StudentController implements Color{
     public void addNewStudent(){
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("🟢 INSERT STUDENT'S INFO");
-        System.out.print("➡️ Insert student's name: ");
+        System.out.println("🧑🏻‍🚀 INSERT STUDENT'S INFO");
+        System.out.print("[+] Insert student's name: ");
         String name = sc.nextLine();
         while (!isValidName(name)) {
-            System.out.print(RED);
+//            System.out.print(RED);
             System.out.println("⚠️ Name cannot contain numbers. Please enter a valid name.");
-            System.out.print(RESET);
-            System.out.print("➡️ Insert student's name: ");
+//            System.out.print(RESET);
+            System.out.print("[+] Insert student's name: ");
             name = sc.nextLine();
         }
 
-        System.out.println("🟢 STUDENT DATE OF BIRTH");
+        System.out.println("[+] STUDENT DATE OF BIRTH");
 
-        Integer year = validaYear(sc, "➡️ Year (number): ");
-        Integer month = validMonthDay(sc, "➡️ Month (number): ", 1, 12);
-        Integer day = validMonthDay(sc, "➡️ Day (number): ", 1, 31);
+        Integer year = validaYear(sc, "> Year (number): ");
+        Integer month = validMonthDay(sc, "> Month (number): ", 1, 12);
+        Integer day = validMonthDay(sc, "> Day (number): ", 1, 31);
 
         sc.nextLine(); // Consume newline
 
-        System.out.println("🔵 YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1, C2).");
-        System.out.print("➡️ Student's class: ");
+        System.out.println("🔔 YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1, C2).");
+        System.out.print("[+] Student's class: ");
         String classNamesInput = sc.nextLine();
         String[] classNames = classNamesInput.split(",");
         List<String> classes = new ArrayList<>();
@@ -61,14 +67,21 @@ public class StudentController implements Color{
             classes.add(className.trim());
         }
 
-        System.out.println("🔵 YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, S2).");
-        System.out.print("➡️ Subject's studied: ");
+        System.out.println("🔔 YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, S2).");
+        System.out.print("[+] Subject's studied: ");
         String subjectsInput = sc.nextLine();
         String[] subjects = subjectsInput.split(",");
         List<String> subjectsList = new ArrayList<>();
         for (String subject : subjects) {
             subjectsList.add(subject.trim());
         }
+
+        int randomNumber;
+        String id;
+        do{
+            randomNumber = generateRandomNumber(1000,9999);
+            id = randomNumber + "CSTAD";
+        }while (isDuplicateID(id));
 
         LocalDate date = LocalDate.now();
         String createDate = date.toString();
@@ -84,16 +97,29 @@ public class StudentController implements Color{
         newStudent.setCreateDate(createDate);
 
         students.add(newStudent);
-        String serializedProduct = serializeProduct(newStudent);
+        String serializedProduct = serializeStudent(newStudent);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/transaction.dat", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat.dat", true))) {
             writer.write(serializedProduct + "\n");
-            System.out.println("✅ STUDENT HAS BEEN ADD SUCCESSFULLY");
+            System.out.println("-".repeat(100));
+            System.out.println("💾 STUDENT HAS BEEN ADD SUCCESSFULLY");
         } catch (IOException e) {
             System.err.println("⚠️ Error writing to transaction file: " + e.getMessage());
         }
         System.out.println("⚠️ TO STORE DATA PERMANENTLY, PLEASE COMMIT IT (START OPTIONS 3).");
+        System.out.println("-".repeat(100));
+    }
 
+    private boolean isDuplicateID(String id)
+    {
+        for(Student student : students)
+        {
+            if(student.getId().equals(id))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isValidName(String name) {
@@ -106,9 +132,8 @@ public class StudentController implements Color{
             if (sc.hasNextInt()) {
                 return sc.nextInt();
             } else {
-
-                System.out.println(RED +"⚠️ Invalid input! Please enter a valid number." + RESET);
-                sc.next(); // Consume non-integer input
+                System.out.println("⚠️ Invalid input! Please enter a valid number.");
+                sc.next();
             }
         }
     }
@@ -120,64 +145,366 @@ public class StudentController implements Color{
                 return input;
             } else {
 
-                System.out.println(RED +"⚠️ Invalid input! Input must be between " + min + " and " + max + "." + RESET);
+                System.out.println("⚠️ Invalid input! Input must be between " + min + " and " + max + ".");
             }
         }
     }
 
-    public boolean hasUncommittedTransactions() {
-        File file = new File("data/transaction.dat");
-        return file.exists() && file.length() > 0;
+    public void loadStudentsFromFile() {
+        students.clear(); // Clear existing data to prevent duplicates
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/student.dat"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 8) {
+                    try {
+                        Student student = new Student(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                                Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]);
+                        if (!isDuplicateID(student.getId())) {
+                            students.add(student);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing data from file: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading student data from file: " + e.getMessage());
+        }
     }
 
-    public void commitChanges() {
-        System.out.print("❔ Are you sure you want to commit? [Y/N]: ");
-        String answer = sc.nextLine();
-        if(answer.equalsIgnoreCase("y")){
+    public List<Student> searchStudentsByName(String name) {
+        List<Student> foundStudents = new ArrayList<>();
+        for (Student student : students) {
+            if (student.getName().toLowerCase().contains(name.toLowerCase())) {
+                foundStudents.add(student);
+            }
+        }
+        return foundStudents;
+    }
 
-            if (delete){
-                try (BufferedReader reader = new BufferedReader(new FileReader("data/transaction.dat"));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat"))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        writer.write(line);
-                        writer.newLine();
-                    }
-                    System.out.println("✅ Changes committed successfully!");
-                    this.changesCommitted = true;
-                } catch (IOException e) {
-                    System.err.println("Error committing changes: " + e.getMessage());
+    public Student searchStudentById(String id) {
+        for (Student student : students) {
+            if (student.getId().equalsIgnoreCase(id)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    public void updateStudentInfoById() {
+        Scanner sc = new Scanner(System.in);
+        boolean found = false;
+
+        while (!found) {
+            System.out.println("[*] UPDATE STUDENT'S INFO BY ID");
+            System.out.print("> Insert student's ID: ");
+            String id = sc.nextLine();
+
+            Student studentToUpdate = searchStudentById(id);
+
+            if (studentToUpdate != null) {
+                found = true;
+                StudentView.displayStudentByID(studentToUpdate);
+
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.println("[+] UPDATE STUDENT'S INFORMATION:");
+                System.out.println("+" + "~".repeat(117) + "+");
+
+                System.out.println("1. UPDATE STUDENT'S NAME");
+                System.out.println("2. UPDATE STUDENT'S DATE OF BIRTH");
+                System.out.println("3. UPDATE STUDENT'S CLASS");
+                System.out.println("4. UPDATE STUDENT'S SUBJECT");
+                System.out.println("0. Cancel");
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.print("> Insert option: ");
+                int choice = sc.nextInt();
+                sc.nextLine(); // Consume newline
+
+                switch (choice) {
+                    case 1:
+                        System.out.print("[+] Insert New student's name: ");
+                        studentToUpdate.setName(sc.nextLine());
+                        break;
+                    case 2:
+                        System.out.println("[+] Insert New student's date of birth:");
+                        System.out.print("> Year (number): ");
+                        int year = sc.nextInt();
+                        System.out.print("> Month (number): ");
+                        int month = sc.nextInt();
+                        System.out.print("> Day (number): ");
+                        int day = sc.nextInt();
+                        studentToUpdate.setYear(year);
+                        studentToUpdate.setMonth(month);
+                        studentToUpdate.setDay(day);
+                        break;
+                    case 3:
+                        System.out.print("[+] Insert New student's class: ");
+                        studentToUpdate.setClassroom(sc.nextLine());
+                        break;
+                    case 4:
+                        System.out.print("[+] Insert New student's subject: ");
+                        studentToUpdate.setSubject(sc.nextLine());
+                        break;
+                    case 0:
+                        System.out.println("❌ Update cancelled.");
+                        System.out.println("+" + "~".repeat(117) + "+");
+                        return;
+                    default:
+                        System.out.println("Invalid choice.");
+
+                        return;
                 }
-                delete=false;
+
+                // Update create date to current date
+                LocalDate currentDate = LocalDate.now();
+                studentToUpdate.setCreateDate(currentDate.toString());
+
+                StudentView.displayStudentByID(studentToUpdate);
+                System.out.print("💾 UPDATE SUCCESSFULLY, PRESS TO CONTINUE...");
+                sc.nextLine();
+
+                // Update the data in the file
+                try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
+                    for (Student student : students) {
+                        writer.println(serializeStudent(student));
+                    }
+                } catch (IOException e) {
+                    System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+                }
+
+            } else {
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.println("⚠️ Student not found. Please try again.");
+                System.out.println("+" + "~".repeat(117) + "+");
+            }
+        }
+    }
+
+    public double getTimeToReadDataFromFileInSeconds() {
+        long startTime = System.currentTimeMillis(); // Record start time
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/student.dat"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 8) {
+                    try {
+                        Student student = new Student(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                                Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]);
+                        students.add(student);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing data: " + e.getMessage());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading student data from file: " + e.getMessage());
+        }
+        long endTime = System.currentTimeMillis(); // Record end time
+        long elapsedTimeMillis = endTime - startTime;
+        return elapsedTimeMillis / 1000.0; // Return elapsed time in seconds
+    }
+
+    public int getNumberOfRecordsInFile() {
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader("data/student.dat"))) {
+            while (reader.readLine() != null) {
+                count++;
+            }
+        } catch (IOException e) {
+            System.err.println("Error counting records in file: " + e.getMessage());
+        }
+        return count;
+    }
+
+    public void commitDataToFile() {
+        try {
+            List<Student> studentsToCommit = new ArrayList<>();
+            boolean dataToCommit = false;
+
+            // Check if there are records to commit
+            try (BufferedReader reader = new BufferedReader(new FileReader("transaction/transaction-addNew.dat.dat"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split(",");
+                    if (parts.length == 8) {
+                        try {
+                            Student student = new Student(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                                    Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]);
+                            studentsToCommit.add(student);
+                            dataToCommit = true; // Records found to commit
+                        } catch (NumberFormatException e) {
+                            System.err.println("Error parsing data from transaction file: " + e.getMessage());
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading transaction data from file: " + e.getMessage());
+            }
+
+            if (!dataToCommit) {
+                System.out.println("⚠️ No data to commit");
+                System.out.println("~".repeat(100));
                 return;
             }
-            if (students.isEmpty()){
-                System.out.println("⚠️ No data, can't commit...!");
-            }
-            else{
-                if (!hasUncommittedTransactions()) {
-                    System.out.println("No uncommitted transactions to commit.");
-                    return;
-                }
-                try (BufferedReader reader = new BufferedReader(new FileReader("data/transaction.dat"));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat"))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        writer.write(line);
-                        writer.newLine();
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("⚠️ Are you sure you want to commit data to student.dat? (Yes/No): ");
+            String confirm = scanner.nextLine().trim();
+
+            if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
+                // Commit the data
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat", true))) {
+                    for (Student student : studentsToCommit) {
+                        String serializedStudent = serializeStudent(student);
+                        writer.write(serializedStudent + "\n");
                     }
-                    System.out.println("✅ Changes committed successfully!");
-                    this.changesCommitted = true;
+                    System.out.println("✅ Data committed successfully.");
+                    System.out.println(".".repeat(100));
                 } catch (IOException e) {
-                    System.err.println("Error committing changes: " + e.getMessage());
+                    System.err.println("⚠️ Error writing data to student.dat file: " + e.getMessage());
                 }
+
+                // Clear the transaction file after committing data
+                try (PrintWriter writer = new PrintWriter("transaction/transaction-addNew.dat.dat")) {
+                    writer.print("");
+
+                } catch (FileNotFoundException e) {
+                    System.err.println("⚠️ Error clearing transaction data: " + e.getMessage());
+                }
+            } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
+                System.out.println("⚠️ Commit operation cancelled.");
+            } else {
+                System.out.println(".".repeat(119));
+                System.out.println("⚠️ Invalid input. Please enter 'Yes' or 'No'.");
+                System.out.println(".".repeat(119));
             }
+        } catch (Exception e) {
+            System.err.println("⚠️ Error: " + e.getMessage());
         }
-        else if(answer.equalsIgnoreCase("n")){
-            System.out.println("❗You didn't commit anything...!");
+    }
+
+    public StudentController() {
+        loadStudentsFromFile();
+    }
+
+    public void saveChanges() {
+        if (changesCommitted || delete) {
+            commitDataToFile(); // Commit data if changes are made
         }
-        else System.out.println("Invalid input...!");
+    }
+
+    public void generateDataToFile(int numRecords) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat.dat",true))) {
+            Instant start = Instant.now(); // Record start time
+            Random random = new Random();
+            for (int i = 0; i < numRecords; i++) {
+                int randomNumber = 1000 + random.nextInt(9000);
+                String id = randomNumber + "CSTAD";
+                String name = "Student" + (i + 1);
+                int year = 1990 + random.nextInt(20);
+                int month = 1 + random.nextInt(12);
+                int day = 1 + random.nextInt(28);
+                String classroom = "Class" + (random.nextInt(5) + 1);
+                String subject = "Subject" + (random.nextInt(5) + 1);
+                LocalDate date = LocalDate.now();
+                String createDate = date.toString();
+
+                String serializedStudent = String.format("%s,%s,%d,%d,%d,%s,%s,%s", id, name, day, month, year, classroom, subject, createDate);
+                writer.write(serializedStudent + "\n");
+            }
+            Instant end = Instant.now(); // Record end time
+            Duration timeElapsed = Duration.between(start, end); // Calculate time elapsed
+            double seconds = timeElapsed.toMillis() / 1000.0; // Convert milliseconds to seconds
+            System.out.println("~".repeat(119));
+            System.out.println("💾 Data generated successfully.");
+            System.out.println("⏰ Time spent for generating data: " + seconds + " S");
+            System.out.println("~".repeat(119));
+        } catch (IOException e) {
+            System.err.println("⚠️ Error generating data to student_generated.dat file: " + e.getMessage());
+        }
     }
 
 
+    public void deleteStudentById() {
+        Scanner sc = new Scanner(System.in);
+        boolean found = false;
+
+        while (!found) {
+            System.out.println("[*] DELETE STUDENT'S INFO BY ID");
+            System.out.print("> Insert student's ID: ");
+            String id = sc.nextLine();
+
+            Student studentToDelete = searchStudentById(id);
+
+            if (studentToDelete != null) {
+                found = true;
+                StudentView.displayStudentByID(studentToDelete);
+                System.out.print("[+] Are you sure you want to delete this student? (Yes/No): ");
+                String confirm = sc.nextLine().trim();
+
+                if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
+                    students.remove(studentToDelete);
+                    System.out.println("+" + "~".repeat(117) + "+");
+                    System.out.println("✅ User data has been deleted successfully.");
+                    System.out.println("+" + "~".repeat(117) + "+");
+
+                    // Update the data in the file
+                    try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
+                        for (Student student : students) {
+                            writer.println(serializeStudent(student));
+                        }
+
+                    } catch (IOException e) {
+                        System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+                    }
+                } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
+                    System.out.println(".".repeat(103));
+                    System.out.println("❌ Deletion cancelled.");
+                    System.out.println(".".repeat(103));
+                } else {
+                    System.out.println("+" + "~".repeat(117) + "+");
+                    System.out.println("⚠️ Invalid input. Please enter 'Yes' or 'No'.");
+                    System.out.println("+" + "~".repeat(117) + "+");
+                }
+            } else {
+                System.out.println("+" + "~".repeat(117) + "+");
+                System.out.println("⚠️ Student not found. Please try again.");
+                System.out.println("+" + "~".repeat(117) + "+");
+            }
+        }
+    }
+
+    public void deleteAllStudents() {
+        if (students.isEmpty()) {
+            System.out.println("⚠️ There are no students to delete.");
+            System.out.println("~".repeat(119));
+            return;
+        }
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("⚠️ Are you sure you want to delete all student data? (Yes/No): ");
+        String confirm = sc.nextLine().trim();
+
+        if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
+            students.clear();
+            System.out.println("~".repeat(119));
+            System.out.println("✅ All student data has been deleted successfully.");
+            System.out.println("~".repeat(119));
+
+            // Update the data in the file
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
+                // Data cleared, so no need to write anything
+            } catch (IOException e) {
+                System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+            }
+        } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
+            System.out.println("~".repeat(119));
+            System.out.println("❌ Deletion cancelled.");
+            System.out.println("~".repeat(119));
+        } else {
+            System.out.println("⚠️ Invalid input. Please enter 'Yes' or 'No'.");
+        }
+    }
 }
+
