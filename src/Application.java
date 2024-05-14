@@ -108,7 +108,7 @@ public class Application implements Color {
                         System.out.println("+" + "~".repeat(117) + "+");
                         System.out.print("🖨️ Number of objects you want to generate (100M - 1_000_000_000): ");
                         int numRecords = sc.nextInt();
-                        sc.nextLine(); // Consume newline
+                        sc.nextLine();
                         studentController.generateDataToFile(numRecords);
                         break;
                     case 8:

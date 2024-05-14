@@ -119,7 +119,7 @@ public class StudentController implements Color, StudentService {
     }
 
     private boolean isValidName(String name) {
-        return name.matches("[a-zA-Z]+");
+        return name.matches("[a-zA-Z\\s]+");
     }
 
    private static Integer validaYear(Scanner sc, String message) {
