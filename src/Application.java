@@ -6,8 +6,10 @@ import fileIO.view.StudentView;
 import java.util.List;
 import java.util.Scanner;
 
-public class Application implements Color {
-    public static void main(String[] args) {
+public 3#class Application implements Color {
+    #
+
+   # public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         StudentController studentController = new StudentController();
         boolean exit = false;
