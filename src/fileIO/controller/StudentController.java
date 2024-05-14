@@ -22,9 +22,6 @@ public class StudentController implements Color, StudentService {
         return students;
     }
 
-    int randomNumber = generateRandomNumber(1000, 9999);
-    String id = randomNumber + "CSTAD";
-
     public int generateRandomNumber(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
@@ -53,7 +50,7 @@ public class StudentController implements Color, StudentService {
         Integer month = validateMonth(sc, "> Month (number): ");
         Integer day = validateDay(sc, "> Day (number): ");
 
-        sc.nextLine(); // Consume newline
+        sc.nextLine();
 
         System.out.println( YELLOW + "🔔 YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1, C2)." + RESET);
         System.out.print("[+] Student's class: ");
@@ -242,7 +239,7 @@ public class StudentController implements Color, StudentService {
                 System.out.println("+" + "~".repeat(117) + "+");
                 System.out.print("> Insert option: ");
                 int choice = sc.nextInt();
-                sc.nextLine(); // Consume newline
+                sc.nextLine();
 
                 switch (choice) {
                     case 1:
@@ -275,11 +272,9 @@ public class StudentController implements Color, StudentService {
                         return;
                     default:
                         System.out.println("Invalid choice.");
-
                         return;
                 }
 
-                // Update create date to current date
                 LocalDate currentDate = LocalDate.now();
                 studentToUpdate.setCreateDate(currentDate.toString());
 
@@ -287,13 +282,13 @@ public class StudentController implements Color, StudentService {
                 System.out.print("💾 UPDATE SUCCESSFULLY, PRESS TO CONTINUE...");
                 sc.nextLine();
 
-                // Update the data in the file
+
                 try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
                     for (Student student : students) {
                         writer.println(serializeStudent(student));
                     }
                 } catch (IOException e) {
-                    System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+                    System.err.println("⚠️ Error updating data: " + e.getMessage());
                 }
 
             } else {
@@ -375,7 +370,7 @@ public class StudentController implements Color, StudentService {
             String confirm = scanner.nextLine().trim();
 
             if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
-                // Commit the data
+
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat", true))) {
                     for (Student student : studentsToCommit) {
                         String serializedStudent = serializeStudent(student);
@@ -412,13 +407,13 @@ public class StudentController implements Color, StudentService {
 
     public void saveChanges() {
         if (changesCommitted || delete) {
-            commitDataToFile(); // Commit data if changes are made
+            commitDataToFile();
         }
     }
 
     public void generateDataToFile(int numRecords) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat",true))) {
-            Instant start = Instant.now(); // Record start time
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat",true))) {
+            Instant start = Instant.now();
             Random random = new Random();
             for (int i = 0; i < numRecords; i++) {
                 int randomNumber = 1000 + random.nextInt(9000);
@@ -435,9 +430,9 @@ public class StudentController implements Color, StudentService {
                 String serializedStudent = String.format("%s,%s,%d,%d,%d,%s,%s,%s", id, name, day, month, year, classroom, subject, createDate);
                 writer.write(serializedStudent + "\n");
             }
-            Instant end = Instant.now(); // Record end time
-            Duration timeElapsed = Duration.between(start, end); // Calculate time elapsed
-            double seconds = timeElapsed.toMillis() / 1000.0; // Convert milliseconds to seconds
+            Instant end = Instant.now();
+            Duration timeElapsed = Duration.between(start, end);
+            double seconds = timeElapsed.toMillis() / 1000.0;
             System.out.println("~".repeat(119));
             System.out.println("💾 Data generated successfully.");
             System.out.println("⏰ Time spent for generating data: " + seconds + " S");
@@ -470,14 +465,13 @@ public class StudentController implements Color, StudentService {
                     System.out.println("✅ User data has been deleted successfully.");
                     System.out.println("+" + "~".repeat(117) + "+");
 
-                    // Update the data in the file
                     try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
                         for (Student student : students) {
                             writer.println(serializeStudent(student));
                         }
 
                     } catch (IOException e) {
-                        System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+                        System.err.println("⚠️ Error updating data in file: " + e.getMessage());
                     }
                 } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
                     System.out.println(".".repeat(103));
@@ -513,11 +507,9 @@ public class StudentController implements Color, StudentService {
             System.out.println("✅ All student data has been deleted successfully.");
             System.out.println("~".repeat(119));
 
-            // Update the data in the file
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("data/student.dat")))) {
-                // Data cleared, so no need to write anything
             } catch (IOException e) {
-                System.err.println("⚠️ Error updating data in student.dat file: " + e.getMessage());
+                System.err.println("⚠️ Error updating data in file: " + e.getMessage());
             }
         } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
             System.out.println("~".repeat(119));
