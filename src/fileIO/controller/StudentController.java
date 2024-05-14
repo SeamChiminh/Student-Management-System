@@ -122,18 +122,6 @@ public class StudentController implements Color, StudentService {
         return name.matches("[a-zA-Z]+");
     }
 
-   /* private Integer validaYear(Scanner sc, String message) {
-        while (true) {
-            System.out.print(message);
-            if (sc.hasNextInt()) {
-                return sc.nextInt();
-            } else {
-                System.out.println( RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
-                sc.next();
-            }
-        }
-    }
-    */
    private static Integer validaYear(Scanner sc, String message) {
        while (true) {
            System.out.print(message);
@@ -142,7 +130,7 @@ public class StudentController implements Color, StudentService {
                if (year >= 1900 && year <= 2024) {
                    return year;
                } else {
-                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1000 and 2024." + RESET);
+                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1900 and 2024." + RESET);
                }
            } else {
                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
