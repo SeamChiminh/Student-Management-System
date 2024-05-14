@@ -493,13 +493,13 @@ public class StudentController implements Color, StudentService {
 
     public void deleteAllStudents() {
         if (students.isEmpty()) {
-            System.out.println("⚠️ There are no students to delete.");
+            System.out.println( RED + "⚠️ There are no students to delete." + RESET);
             System.out.println("~".repeat(119));
             return;
         }
 
         Scanner sc = new Scanner(System.in);
-        System.out.print("⚠️ Are you sure you want to delete all student data? (Yes/No): ");
+        System.out.print(YELLOW + "⚠️ Are you sure you want to delete all student data? (Yes/No): " + RESET);
         String confirm = sc.nextLine().trim();
 
         if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
@@ -517,7 +517,7 @@ public class StudentController implements Color, StudentService {
             System.out.println("❌ Deletion cancelled.");
             System.out.println("~".repeat(119));
         } else {
-            System.out.println("⚠️ Invalid input. Please enter 'Yes' or 'No'.");
+            System.out.println(RED + "⚠️ Invalid input. Please enter 'Yes' or 'No'." + RESET);
         }
     }
 }
