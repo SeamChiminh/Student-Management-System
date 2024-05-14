@@ -1,16 +1,14 @@
 import fileIO.controller.StudentController;
 import fileIO.utils.Student;
+import fileIO.view.Color;
 import fileIO.view.Menu;
 import fileIO.view.StudentView;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Application {
+public class Application implements Color {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<Student> students = new ArrayList<>();
         StudentController studentController = new StudentController();
         boolean exit = false;
 
@@ -70,7 +68,7 @@ public class Application {
                                         sc.nextLine();
                                     } else {
                                         System.out.println("+" + "~".repeat(117) + "+");
-                                        System.out.println("⚠️ Student not found by ID.");
+                                        System.out.println(RED + "⚠️ Student not found by ID! " + RESET);
                                         System.out.println("+" + "~".repeat(117) + "+");
                                     }
                                     break;
@@ -84,7 +82,7 @@ public class Application {
                                         StudentView.listAllStudent(foundByName);
                                     } else {
                                         System.out.println("+" + "~".repeat(117) + "+");
-                                        System.out.println("⚠️ No students found by name.");
+                                        System.out.println(RED + "⚠️ No students found by name! " + RESET);
                                         System.out.println("+" + "~".repeat(117) + "+");
                                     }
                                     break;
@@ -92,7 +90,7 @@ public class Application {
                                     searchBack = true;
                                     break;
                                 default:
-                                    System.out.println("⚠️ Invalid option. Please select 1, 2, or B.");
+                                    System.out.println(RED + "⚠️ Invalid option. Please select 1, 2, or B." + RESET);
                                     System.out.println("+" + "~".repeat(117) + "+");
                                     break;
                             }
@@ -127,12 +125,12 @@ public class Application {
                         break;
                     default:
                         System.out.println("+" + "~".repeat(117) + "+");
-                        System.out.println("⚠️ Invalid choice. Please enter a valid option.");
+                        System.out.println(RED + "⚠️ Invalid choice. Please enter a valid option."+ RESET);
                         System.out.println("+" + "~".repeat(117) + "+");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("+" + "~".repeat(117) + "+");
-                System.out.println("⚠️ Invalid choice. Please enter a valid number.");
+                System.out.println( RED+ "⚠️ Invalid choice. Please enter a valid number." + RESET);
                 System.out.println("+" + "~".repeat(117) + "+");
             }
         }
