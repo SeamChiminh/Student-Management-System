@@ -122,7 +122,7 @@ public class StudentController implements Color, StudentService {
         return name.matches("[a-zA-Z]+");
     }
 
-    private Integer validaYear(Scanner sc, String message) {
+   /* private Integer validaYear(Scanner sc, String message) {
         while (true) {
             System.out.print(message);
             if (sc.hasNextInt()) {
@@ -133,6 +133,23 @@ public class StudentController implements Color, StudentService {
             }
         }
     }
+    */
+   private static Integer validaYear(Scanner sc, String message) {
+       while (true) {
+           System.out.print(message);
+           if (sc.hasNextInt()) {
+               int year = sc.nextInt();
+               if (year >= 1900 && year <= 2024) {
+                   return year;
+               } else {
+                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1000 and 2024." + RESET);
+               }
+           } else {
+               System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
+               sc.next();
+           }
+       }
+   }
 
     private Integer validMonthDay(Scanner sc, String message, int min, int max) {
         while (true) {
