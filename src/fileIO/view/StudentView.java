@@ -1,5 +1,6 @@
 package fileIO.view;
 
+import fileIO.controller.StudentController;
 import fileIO.utils.Student;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
@@ -108,6 +109,7 @@ public class StudentView implements Color{
     static Integer pageSize = 1;
     static Integer rowPerPage = 4;
 
+
     public static void listAllStudent(List<Student> students) {
         pageSize = (int) Math.ceil((double) students.size() / rowPerPage);
         int startIndex = (currentPage * rowPerPage) - rowPerPage; // 5
@@ -151,9 +153,10 @@ public class StudentView implements Color{
                 table.addCell(students.get(i).getCreateDate(), cellStyle);
             }
 
+            StudentController stController = new StudentController();
             System.out.println(table.render());
             System.out.println("+" + "~".repeat(117) + "+");
-            System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " [+] All Record: " + students.size());
+            System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " [+] All Record: " + stController.getNumberOfRecordsInFile());
             System.out.println("[+] Previous (P/p) \t\t [+] Next (N/n) \t\t\t [+] Back(B/b)");
             System.out.println("+" + "~".repeat(117) + "+");
             System.out.print("[+] Insert to Navigation [P/N]: ");
