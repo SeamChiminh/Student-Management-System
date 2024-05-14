@@ -50,8 +50,8 @@ public class StudentController implements Color, StudentService {
         System.out.println("[+] STUDENT DATE OF BIRTH");
 
         Integer year = validaYear(sc, "> Year (number): ");
-        Integer month = validMonthDay(sc, "> Month (number): ", 1, 12);
-        Integer day = validMonthDay(sc, "> Day (number): ", 1, 31);
+        Integer month = validateMonth(sc, "> Month (number): ");
+        Integer day = validateDay(sc, "> Day (number): ");
 
         sc.nextLine(); // Consume newline
 
@@ -122,18 +122,6 @@ public class StudentController implements Color, StudentService {
         return name.matches("[a-zA-Z]+");
     }
 
-   /* private Integer validaYear(Scanner sc, String message) {
-        while (true) {
-            System.out.print(message);
-            if (sc.hasNextInt()) {
-                return sc.nextInt();
-            } else {
-                System.out.println( RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
-                sc.next();
-            }
-        }
-    }
-    */
    private static Integer validaYear(Scanner sc, String message) {
        while (true) {
            System.out.print(message);
@@ -142,7 +130,7 @@ public class StudentController implements Color, StudentService {
                if (year >= 1900 && year <= 2024) {
                    return year;
                } else {
-                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1000 and 2024." + RESET);
+                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1900 and 2024." + RESET);
                }
            } else {
                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
@@ -151,14 +139,36 @@ public class StudentController implements Color, StudentService {
        }
    }
 
-    private Integer validMonthDay(Scanner sc, String message, int min, int max) {
+    private static Integer validateDay(Scanner sc, String message) {
         while (true) {
-            Integer input = validaYear(sc, message);
-            if (input >= min && input <= max) {
-                return input;
+            System.out.print(message);
+            if (sc.hasNextInt()) {
+                int day = sc.nextInt();
+                if (day >= 1 && day <= 31) {
+                    return day;
+                } else {
+                    System.out.println(RED + "⚠️ Invalid input! Please enter a day between 1 and 31." + RESET);
+                }
             } else {
+                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
+                sc.next();
+            }
+        }
+    }
 
-                System.out.println( RED + "⚠️ Invalid input! Input must be between " + min + " and " + max + "." + RESET);
+    private static Integer validateMonth(Scanner sc, String message) {
+        while (true) {
+            System.out.print(message);
+            if (sc.hasNextInt()) {
+                int month = sc.nextInt();
+                if (month >= 1 && month <= 12) {
+                    return month;
+                } else {
+                    System.out.println(RED + "⚠️ Invalid input! Please enter a month between 1 and 12." + RESET);
+                }
+            } else {
+                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
+                sc.next();
             }
         }
     }
