@@ -412,7 +412,7 @@ public class StudentController implements Color, StudentService {
     }
 
     public void generateDataToFile(int numRecords) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat",true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat",true))) {
             Instant start = Instant.now();
             Random random = new Random();
             for (int i = 0; i < numRecords; i++) {
@@ -436,6 +436,7 @@ public class StudentController implements Color, StudentService {
             System.out.println("~".repeat(119));
             System.out.println("💾 Data generated successfully.");
             System.out.println("⏰ Time spent for generating data: " + seconds + " S");
+            System.out.println("✅ WROTE DATA " + numRecords + " RECORD SUCCESSFULLY.");
             System.out.println("~".repeat(119));
         } catch (IOException e) {
             System.err.println("⚠️ Error generating data to student_generated.dat file: " + e.getMessage());
