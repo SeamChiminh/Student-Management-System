@@ -9,7 +9,7 @@ import org.nocrala.tools.texttablefmt.Table;
 import java.util.List;
 import java.util.Scanner;
 
-public class StudentView {
+public class StudentView implements Color{
     static Integer currentPage = 1;
     static Integer pageSize = 1;
     static Integer rowPerPage = 4;
@@ -68,7 +68,7 @@ public class StudentView {
                         listAllStudent(students);
                         break;
                     } else {
-                        System.out.println("⚠️ First page.");
+                        System.out.println(YELLOW +"⚠️ First page." + RESET);
                     }
                 } else if (input.equalsIgnoreCase("N") || input.equalsIgnoreCase("next")) {
                     if (currentPage < pageSize) {
@@ -76,12 +76,12 @@ public class StudentView {
                         listAllStudent(students);
                         break;
                     } else {
-                        System.out.println("⚠️ Last page.");
+                        System.out.println( YELLOW + "⚠️ Last page." + RESET);
                     }
                 } else if (input.equalsIgnoreCase("B") || input.equalsIgnoreCase("back")) {
                     return;
                 } else {
-                    System.out.println("⚠️ Invalid input.");
+                    System.out.println( RED + "⚠️ Invalid input." + RESET);
                 }
 
                 System.out.println("+" + "~".repeat(117) + "+");
@@ -93,7 +93,7 @@ public class StudentView {
             }
 
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("No records to display.");
+            System.out.println(YELLOW + "No records to display." + RESET);
         }
     }
 

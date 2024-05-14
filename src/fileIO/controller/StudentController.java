@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class StudentController implements Color{
-    Scanner sc = new Scanner(System.in);
+public class StudentController implements Color, StudentService {
     private static List<Student> students = new ArrayList<>();
     private boolean changesCommitted;
     private boolean delete;
@@ -26,7 +25,7 @@ public class StudentController implements Color{
     int randomNumber = generateRandomNumber(1000, 9999);
     String id = randomNumber + "CSTAD";
 
-    private int generateRandomNumber(int min, int max) {
+    public int generateRandomNumber(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
     }
@@ -43,9 +42,7 @@ public class StudentController implements Color{
         System.out.print("[+] Insert student's name: ");
         String name = sc.nextLine();
         while (!isValidName(name)) {
-//            System.out.print(RED);
-            System.out.println("⚠️ Name cannot contain numbers. Please enter a valid name.");
-//            System.out.print(RESET);
+            System.out.println(RED + "⚠️ Name cannot contain numbers. Please enter a valid name." + RESET);
             System.out.print("[+] Insert student's name: ");
             name = sc.nextLine();
         }
@@ -53,12 +50,12 @@ public class StudentController implements Color{
         System.out.println("[+] STUDENT DATE OF BIRTH");
 
         Integer year = validaYear(sc, "> Year (number): ");
-        Integer month = validMonthDay(sc, "> Month (number): ", 1, 12);
-        Integer day = validMonthDay(sc, "> Day (number): ", 1, 31);
+        Integer month = validateMonth(sc, "> Month (number): ");
+        Integer day = validateDay(sc, "> Day (number): ");
 
         sc.nextLine(); // Consume newline
 
-        System.out.println("🔔 YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1, C2).");
+        System.out.println( YELLOW + "🔔 YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1, C2)." + RESET);
         System.out.print("[+] Student's class: ");
         String classNamesInput = sc.nextLine();
         String[] classNames = classNamesInput.split(",");
@@ -67,7 +64,7 @@ public class StudentController implements Color{
             classes.add(className.trim());
         }
 
-        System.out.println("🔔 YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, S2).");
+        System.out.println( YELLOW + "🔔 YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, S2)." + RESET);
         System.out.print("[+] Subject's studied: ");
         String subjectsInput = sc.nextLine();
         String[] subjects = subjectsInput.split(",");
@@ -99,19 +96,18 @@ public class StudentController implements Color{
         students.add(newStudent);
         String serializedProduct = serializeStudent(newStudent);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat.dat", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat", true))) {
             writer.write(serializedProduct + "\n");
             System.out.println("-".repeat(100));
-            System.out.println("💾 STUDENT HAS BEEN ADD SUCCESSFULLY");
+            System.out.println(GREEN +"💾 STUDENT HAS BEEN ADD SUCCESSFULLY" + RESET);
         } catch (IOException e) {
-            System.err.println("⚠️ Error writing to transaction file: " + e.getMessage());
+            System.err.println( YELLOW + "⚠️ Error writing to transaction file: " + e.getMessage() + RESET);
         }
-        System.out.println("⚠️ TO STORE DATA PERMANENTLY, PLEASE COMMIT IT (START OPTIONS 3).");
+        System.out.println( YELLOW+ "⚠️ TO STORE DATA PERMANENTLY, PLEASE COMMIT IT (START OPTIONS 3)." + RESET);
         System.out.println("-".repeat(100));
     }
 
-    private boolean isDuplicateID(String id)
-    {
+    private boolean isDuplicateID(String id) {
         for(Student student : students)
         {
             if(student.getId().equals(id))
@@ -123,29 +119,56 @@ public class StudentController implements Color{
     }
 
     private boolean isValidName(String name) {
-        return name.matches("[a-zA-Z]+");
+        return name.matches("[a-zA-Z\\s]+");
     }
 
-    private Integer validaYear(Scanner sc, String message) {
+   private static Integer validaYear(Scanner sc, String message) {
+       while (true) {
+           System.out.print(message);
+           if (sc.hasNextInt()) {
+               int year = sc.nextInt();
+               if (year >= 1900 && year <= 2024) {
+                   return year;
+               } else {
+                   System.out.println(RED + "⚠️ Invalid input! Please enter a year between 1900 and 2024." + RESET);
+               }
+           } else {
+               System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
+               sc.next();
+           }
+       }
+   }
+
+    private static Integer validateDay(Scanner sc, String message) {
         while (true) {
             System.out.print(message);
             if (sc.hasNextInt()) {
-                return sc.nextInt();
+                int day = sc.nextInt();
+                if (day >= 1 && day <= 31) {
+                    return day;
+                } else {
+                    System.out.println(RED + "⚠️ Invalid input! Please enter a day between 1 and 31." + RESET);
+                }
             } else {
-                System.out.println("⚠️ Invalid input! Please enter a valid number.");
+                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
                 sc.next();
             }
         }
     }
 
-    private Integer validMonthDay(Scanner sc, String message, int min, int max) {
+    private static Integer validateMonth(Scanner sc, String message) {
         while (true) {
-            Integer input = validaYear(sc, message);
-            if (input >= min && input <= max) {
-                return input;
+            System.out.print(message);
+            if (sc.hasNextInt()) {
+                int month = sc.nextInt();
+                if (month >= 1 && month <= 12) {
+                    return month;
+                } else {
+                    System.out.println(RED + "⚠️ Invalid input! Please enter a month between 1 and 12." + RESET);
+                }
             } else {
-
-                System.out.println("⚠️ Invalid input! Input must be between " + min + " and " + max + ".");
+                System.out.println(RED + "⚠️ Invalid input! Please enter a valid number." + RESET);
+                sc.next();
             }
         }
     }
@@ -322,8 +345,7 @@ public class StudentController implements Color{
             List<Student> studentsToCommit = new ArrayList<>();
             boolean dataToCommit = false;
 
-            // Check if there are records to commit
-            try (BufferedReader reader = new BufferedReader(new FileReader("transaction/transaction-addNew.dat.dat"))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader("transaction/transaction-addNew.dat"))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(",");
@@ -332,7 +354,7 @@ public class StudentController implements Color{
                             Student student = new Student(parts[0], parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
                                     Integer.parseInt(parts[4]), parts[5], parts[6], parts[7]);
                             studentsToCommit.add(student);
-                            dataToCommit = true; // Records found to commit
+                            dataToCommit = true;
                         } catch (NumberFormatException e) {
                             System.err.println("Error parsing data from transaction file: " + e.getMessage());
                         }
@@ -343,13 +365,13 @@ public class StudentController implements Color{
             }
 
             if (!dataToCommit) {
-                System.out.println("⚠️ No data to commit");
+                System.out.println(RESET + "⚠️ No data to commit" + RESET);
                 System.out.println("~".repeat(100));
                 return;
             }
 
             Scanner scanner = new Scanner(System.in);
-            System.out.print("⚠️ Are you sure you want to commit data to student.dat? (Yes/No): ");
+            System.out.print(YELLOW + "⚠️ Are you sure you want to commit data? (Yes/No): " + RESET);
             String confirm = scanner.nextLine().trim();
 
             if (confirm.equalsIgnoreCase("Yes") || confirm.equalsIgnoreCase("Y")) {
@@ -359,28 +381,28 @@ public class StudentController implements Color{
                         String serializedStudent = serializeStudent(student);
                         writer.write(serializedStudent + "\n");
                     }
-                    System.out.println("✅ Data committed successfully.");
+                    System.out.println( GREEN + "✅ Data committed successfully." + RESET);
                     System.out.println(".".repeat(100));
                 } catch (IOException e) {
-                    System.err.println("⚠️ Error writing data to student.dat file: " + e.getMessage());
+                    System.err.println( RED+ "⚠️ Error writing data to file: " + e.getMessage() + RESET);
                 }
 
                 // Clear the transaction file after committing data
-                try (PrintWriter writer = new PrintWriter("transaction/transaction-addNew.dat.dat")) {
+                try (PrintWriter writer = new PrintWriter("transaction/transaction-addNew.dat")) {
                     writer.print("");
 
                 } catch (FileNotFoundException e) {
-                    System.err.println("⚠️ Error clearing transaction data: " + e.getMessage());
+                    System.err.println( RED + "⚠️ Error clearing transaction data: " + e.getMessage() + RESET);
                 }
             } else if (confirm.equalsIgnoreCase("No") || confirm.equalsIgnoreCase("N")) {
-                System.out.println("⚠️ Commit operation cancelled.");
+                System.out.println(YELLOW + "⚠️ Commit operation cancelled." + RESET);
             } else {
                 System.out.println(".".repeat(119));
-                System.out.println("⚠️ Invalid input. Please enter 'Yes' or 'No'.");
+                System.out.println(RED +"⚠️ Invalid input. Please enter 'Yes' or 'No'." + RESET);
                 System.out.println(".".repeat(119));
             }
         } catch (Exception e) {
-            System.err.println("⚠️ Error: " + e.getMessage());
+            System.err.println( RED + "⚠️ Error: " + e.getMessage() + RESET);
         }
     }
 
@@ -395,7 +417,7 @@ public class StudentController implements Color{
     }
 
     public void generateDataToFile(int numRecords) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat.dat",true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat",true))) {
             Instant start = Instant.now(); // Record start time
             Random random = new Random();
             for (int i = 0; i < numRecords; i++) {
@@ -424,7 +446,6 @@ public class StudentController implements Color{
             System.err.println("⚠️ Error generating data to student_generated.dat file: " + e.getMessage());
         }
     }
-
 
     public void deleteStudentById() {
         Scanner sc = new Scanner(System.in);

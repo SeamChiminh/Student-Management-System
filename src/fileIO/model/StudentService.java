@@ -5,15 +5,17 @@ import fileIO.utils.Student;
 import java.util.List;
 
 public interface StudentService {
-    void generateDesignedObjectForWriting();
-    void addNewStudent(Student student);
-    List<Student> ListAllStudent();
+    void addNewStudent();
+    List<Student> getStudents();
+    void deleteStudentById();
+    void deleteAllStudents();
+    void loadStudentsFromFile();
+    Student searchStudentById(String id);
+    List<Student> searchStudentsByName(String name);
+    double getTimeToReadDataFromFileInSeconds();
+    int getNumberOfRecordsInFile();
     void commitDataToFile();
-    void commitFromTransaction();
-    void destroyData();
-    Boolean checkIfDataAvailableInTransaction(String fileToCheck);
-    List<Student> serchStudentById(String id);
-    List<Student> searchStudentByName(String name);
-    Student deleteStudentById(String id);
-    Student deleteStudentByName(String name);
+    void generateDataToFile(int numRecords);
+    void updateStudentInfoById();
+    int generateRandomNumber(int min, int max);
 }
