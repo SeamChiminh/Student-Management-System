@@ -412,7 +412,7 @@ public class StudentController implements Color, StudentService {
     }
 
     public void generateDataToFile(int numRecords) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat",true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat",true))) {
             Instant start = Instant.now();
             Random random = new Random();
             for (int i = 0; i < numRecords; i++) {
