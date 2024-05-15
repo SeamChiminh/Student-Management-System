@@ -98,7 +98,7 @@ public class StudentController implements Color, StudentService {
             System.out.println("-".repeat(100));
             System.out.println(GREEN +"💾 STUDENT HAS BEEN ADD SUCCESSFULLY" + RESET);
         } catch (IOException e) {
-            System.err.println( YELLOW + "⚠️ Error writing to transaction file: " + e.getMessage() + RESET);
+            System.err.println( YELLOW + "⚠️ Error writing to file: " + e.getMessage() + RESET);
         }
         System.out.println( YELLOW+ "⚠️ TO STORE DATA PERMANENTLY, PLEASE COMMIT IT (START OPTIONS 3)." + RESET);
         System.out.println("-".repeat(100));
