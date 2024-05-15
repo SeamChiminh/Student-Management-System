@@ -93,7 +93,7 @@ public class StudentController implements Color, StudentService {
         students.add(newStudent);
         String serializedProduct = serializeStudent(newStudent);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("transaction/transaction-addNew.dat", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/student.dat", true))) {
             writer.write(serializedProduct + "\n");
             System.out.println("-".repeat(100));
             System.out.println(GREEN +"💾 STUDENT HAS BEEN ADD SUCCESSFULLY" + RESET);
