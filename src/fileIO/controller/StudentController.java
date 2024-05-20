@@ -279,7 +279,7 @@ public class StudentController implements Color, StudentService {
                 studentToUpdate.setCreateDate(currentDate.toString());
 
                 StudentView.displayStudentByID(studentToUpdate);
-                System.out.print("💾 UPDATE SUCCESSFULLY, PRESS TO CONTINUE...");
+                System.out.println("💾 UPDATE SUCCESSFULLY, PRESS TO CONTINUE...");
                 sc.nextLine();
 
 
@@ -360,7 +360,7 @@ public class StudentController implements Color, StudentService {
             }
 
             if (!dataToCommit) {
-                System.out.println(RESET + "⚠️ No data to commit" + RESET);
+                System.out.println(RED + "⚠️ No data to commit" + RESET);
                 System.out.println("~".repeat(100));
                 return;
             }

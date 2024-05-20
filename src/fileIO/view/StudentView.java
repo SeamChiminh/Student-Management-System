@@ -95,10 +95,10 @@ public class StudentView implements Color{
                 }
 
                 System.out.println("+" + "~".repeat(117) + "+");
-                System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " All Record: " + students.size());
+                System.out.println("[*] Page number: " + currentPage + "\t\t" + " [*] Actual record: " + (endIndex - startIndex) + "\t\t" + " All Record: " + stController.getNumberOfRecordsInFile());
                 System.out.println("[+] Previous (P/p) \t\t [+] Next (N/n) \t\t\t [+] Back(B/b)");
                 System.out.println("+" + "~".repeat(117) + "+");
-                System.out.print("[+] Insert to Navigation [P/n]: ");
+                System.out.print("[+] Insert to Navigation [P/N]: ");
                 input = scanner.nextLine();
             }
 
